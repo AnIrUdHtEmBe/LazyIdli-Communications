@@ -1,6 +1,8 @@
 import { ChevronLeft, Mic, Plus, MoreHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMessages } from "@ably/chat/react";
+import { useContext } from "react";
+import { ClientIdContext } from "../main";
 
 import { ChatMessageEventType } from "@ably/chat";
 
@@ -69,6 +71,8 @@ export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
     dateLabel = lastMsgTimestamp.toLocaleDateString();
   }
 
+  const clientId = useContext(ClientIdContext);
+
   return (
     
     <div className="mt-4 shadow-lg flex flex-col h-[80vh]">
@@ -99,7 +103,7 @@ export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
         {messages.map((msg: any, idx) => {
-          const isMine = msg.clientId === "user2anirudh";
+          const isMine = msg.clientId === clientId;
           return (
             <div
               key={idx}

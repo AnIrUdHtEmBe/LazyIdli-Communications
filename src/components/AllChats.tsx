@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Header from "../components/Header";
 import ChatList from "./ChatList";
 import ChatRoom from "../components/ChatRoom";
@@ -9,6 +9,7 @@ import HockeyIcon from "../icons/HockeyIcon";
 import BadmintonIcon from "../icons/BadmintonIcon";
 import ChatCard from "./ChatCard";
 import { ChatRoomProvider } from "@ably/chat/react";
+import { ClientIdContext } from "../main";
 
 
 type AllChatsProps = {
@@ -86,6 +87,8 @@ const AllChats = ({}: AllChatsProps) => {
       actions: ["Join"],
     },
   ];
+
+  const clientId = useContext(ClientIdContext);
   
   console.log(`hello from room-${chatType}-${activeChat}`);
   return (
@@ -172,7 +175,7 @@ const AllChats = ({}: AllChatsProps) => {
 
                 
                 // @ts-ignore
-                connection={{ clientId: "user-2-anirudh" }} // 👈 required for clientId checks
+                connection={{ clientId: clientId }} // 👈 required for clientId checks
               >
                 <ChatRoom
                   type={chatType}
