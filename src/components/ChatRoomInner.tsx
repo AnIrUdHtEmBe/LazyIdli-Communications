@@ -1,8 +1,8 @@
 import { ChevronLeft, Mic, Plus, MoreHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { ChatRoomProvider, useChatConnection, useMessages, useRoom } from "@ably/chat/react";
+import { useMessages } from "@ably/chat/react";
 
-import { ChatMessageEventType, type Message } from "@ably/chat";
+import { ChatMessageEventType } from "@ably/chat";
 
 export interface ChatRoomProps {
   type?: "buddy" | "game" | "tribe";

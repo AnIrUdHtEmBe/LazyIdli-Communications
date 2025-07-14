@@ -1,6 +1,6 @@
 // src/components/icons/FootBallIcon.tsx
 
-import React from "react";
+
 
 const FootBallIcon = () => {
   return (

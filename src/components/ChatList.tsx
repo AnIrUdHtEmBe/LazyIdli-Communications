@@ -22,7 +22,7 @@ const dummyTribes = dummyData.dummyTribes;
 
 
 
-export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps) {
+export default function ChatList({ type, onOpenChat }: ChatListProps) {
   const [showPending, setShowPending] = useState(false);
   const [pastGames, setPastGames] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);

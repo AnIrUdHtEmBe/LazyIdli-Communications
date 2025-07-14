@@ -1,4 +1,4 @@
-import { Bell, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 
 interface HeaderProps {

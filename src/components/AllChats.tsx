@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "../components/Header";
 import ChatList from "./ChatList";
 import ChatRoom from "../components/ChatRoom";
@@ -8,9 +8,8 @@ import TennisIcon from "../icons/TennisIcon";
 import HockeyIcon from "../icons/HockeyIcon";
 import BadmintonIcon from "../icons/BadmintonIcon";
 import ChatCard from "./ChatCard";
-import { ChatRoomProvider, useChatConnection, useRoom } from "@ably/chat/react";
-import { ConnectionStatus } from "@ably/chat";
-import ChatRoomInner from "./ChatRoomInner";
+import { ChatRoomProvider } from "@ably/chat/react";
+
 
 type AllChatsProps = {
   activeRoom?: string; // optional as not used here
@@ -27,46 +26,46 @@ const tribeIcons = [
 
 const AllChats = ({}: AllChatsProps) => {
   
-  function RoomStatus() {
-    const [currentRoomStatus, setCurrentRoomStatus] = useState("");
-    const { roomName } = useRoom({
-      onStatusChange: (status) => {
-        setCurrentRoomStatus(status.current);
-      },
-    });
-    console.log("roomname", roomName);
+  // function RoomStatus() {
+  //   const [currentRoomStatus, setCurrentRoomStatus] = useState("");
+  //   const { roomName } = useRoom({
+  //     onStatusChange: (status) => {
+  //       setCurrentRoomStatus(status.current);
+  //     },
+  //   });
+  //   console.log("roomname", roomName);
 
-    return (
-      <div className="flex-1 border-1 border-blue-500">
-        <ConnectionStatus />
-        <p className="mt-2">
-          Status: {currentRoomStatus}
-          <br />
-          Room: {roomName}
-        </p>
-      </div>
-    );
-  }
+  //   return (
+  //     <div className="flex-1 border-1 border-blue-500">
+  //       <ConnectionStatus />
+  //       <p className="mt-2">
+  //         Status: {currentRoomStatus}
+  //         <br />
+  //         Room: {roomName}
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
-  function ConnectionStatus() {
-    const { currentStatus } = useChatConnection();
-    let i = 0;
-    console.log("new user", i + 1);
-    console.log(currentStatus, "currentStatus");
-    return (
-      <div className="p-4 text-center h-full border-gray-300 bg-gray-100">
-        <h2 className="text-lg font-semibold text-blue-500">
-          Ably Chat Connection
-        </h2>
-        <p className="mt-2">Connection: {currentStatus}!</p>
-      </div>
-    );
-  }
+  // function ConnectionStatus() {
+  //   const { currentStatus } = useChatConnection();
+  //   let i = 0;
+  //   console.log("new user", i + 1);
+  //   console.log(currentStatus, "currentStatus");
+  //   return (
+  //     <div className="p-4 text-center h-full border-gray-300 bg-gray-100">
+  //       <h2 className="text-lg font-semibold text-blue-500">
+  //         Ably Chat Connection
+  //       </h2>
+  //       <p className="mt-2">Connection: {currentStatus}!</p>
+  //     </div>
+  //   );
+  // }
 
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("My Buddy");
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
 
   const isInChatRoom = activeChat !== null;
 
