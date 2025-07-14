@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatCard from "../components/ChatCard";
 
 import dummyData from "../dummyData/dummyData";
@@ -32,6 +32,13 @@ export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps
     setPastGames(false); // ✅ close past games modal if open
   };
 
+  useEffect(() => {
+    setPastGames(false);
+    setShowPending(false);
+    setActiveChatId(null);
+  }, [type]);
+
+
   return (
     <>
       {type === "buddy" && (
@@ -44,7 +51,10 @@ export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps
               count={user.count}
               time={user.time}
               message={user.message}
-              onClick={() => handleOpenChat(user.name)}
+              onClick={() => {
+                onOpenChat(user.name)
+                setPastGames(false)
+            }}
               icon={
                 <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">
                   {user.name[0]}
@@ -59,7 +69,7 @@ export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps
 
       {type === "game" && (
         <>
-          <ChatCard label="Past Games" onClick={() => setPastGames(true)} count={2} time="Yesterday" />
+          <ChatCard label="Past Games" onClick={() => setPastGames((prev) => !prev)} count={2} time="Yesterday" />
           {dummyGames.map((group) => (
             <ChatCard
               key={group.name}
@@ -67,7 +77,10 @@ export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps
               count={group.count}
               time={group.time}
               message={group.message}
-              onClick={() => handleOpenChat(group.name)}
+              onClick={() => {
+                onOpenChat(group.name)
+                setPastGames(false)
+            }}
 
               icon={
                 <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">
@@ -115,7 +128,10 @@ export default function ChatList({ type, onOpenChat, activeChat }: ChatListProps
               count={tribe.count}
               time={tribe.time}
               message={tribe.message}
-              onClick={() => handleOpenChat(tribe.name)}
+              onClick={() => {
+                onOpenChat(tribe.name)
+                setPastGames(false)
+            }}
               icon={
                 <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">
                   {tribe.name[0]}

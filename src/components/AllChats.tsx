@@ -140,7 +140,7 @@ const AllChats = ({}: AllChatsProps) => {
               {tribeIcons.map(({ name, Icon }) => (
                 <div
                   key={name}
-                  onClick={() => setActiveChat(name)}
+                  onClick={() => setActiveChat(null)}
                   className={`cursor-pointer rounded-md w-14 h-14 flex items-center justify-center p-3 transition ${
                     activeChat === name
                       ? "bg-[#00f0ff] shadow-md"
@@ -163,9 +163,15 @@ const AllChats = ({}: AllChatsProps) => {
             } bg-white shadow-lg`}
           >
 
+            
+
             {isInChatRoom ? (
+              
+                
               <ChatRoomProvider
                 name={`room-${chatType}-${activeChat}`}
+
+                
                 // @ts-ignore
                 connection={{ clientId: "user-2-anirudh" }} // 👈 required for clientId checks
               >
@@ -178,11 +184,18 @@ const AllChats = ({}: AllChatsProps) => {
             ) : (
               <ChatList
                 type={chatType}
-                onOpenChat={(id) => setActiveChat(id)}
+                onOpenChat={(id) => {setActiveChat(id)
+                  console.log("opening chat with id", id);
+                  
+                  }}
                 activeChat={activeChat}
               />
+
+              
+              
             )}
           </div>
+          
         </>
       )}
     </>

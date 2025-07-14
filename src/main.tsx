@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AblyProvider client={realtimeClient}>
       <ChatClientProvider client={chatClient}>
-        <App /> {/* Your main app component */}
+        <App /> 
       </ChatClientProvider>
     </AblyProvider>
   </React.StrictMode>,
