@@ -10,6 +10,8 @@ export interface ChatRoomProps {
   type?: "buddy" | "game" | "tribe";
   chatId: string;
   goBack: () => void;
+  activeTab?: string;
+  roomName?: string;
 }
 
 function isToday(date: Date) {
@@ -31,26 +33,59 @@ function isYesterday(date: Date) {
   );
 }
 
-export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
+export default function ChatRoomInner({ type, chatId, goBack, activeTab }: ChatRoomProps) {
   const [messages, setMessages] = useState<any[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(true);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const clientId = useContext(ClientIdContext);
+  const clientsIds = clientId;
 
   // ✅ Real-time message listener
-  const { send } = useMessages({
-    // @ts-ignore
-    listener: (event: MessageEvent) => {
-      // @ts-ignore
-      const message = event.message;
+  // const { send } = useMessages({
+  //   // @ts-ignore
+  //   listener: (event: MessageEvent) => {
+  //     // @ts-ignore
+  //     const message = event.message;
+  //     if (event.type === ChatMessageEventType.Created) {
+  //       setMessages((prev) => [...prev, message]);
+  //     }
+  //   },
+  // });
+
+  const containerHeightClass = activeTab === "My Tribe" ? "h-[83vh]" : "h-[80vh]";
+
+  const { historyBeforeSubscribe, send } = useMessages({
+    listener: (event) => {
       if (event.type === ChatMessageEventType.Created) {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => [...prev, event.message]);
       }
+    },
+    onDiscontinuity: (error) => {
+      console.warn("Discontinuity detected:", error);
+      setLoading(true);
     },
   });
 
+  useEffect(() => {
+    if (historyBeforeSubscribe && loading) {
+      historyBeforeSubscribe({ limit: 50 }).then((result) => {
+        // result.items() returns an array of messages
+        const messages = result.items;
+
+        setMessages(messages);
+        setLoading(false);
+      });
+    }
+  }, [historyBeforeSubscribe, loading]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const sendMessage = () => {
     if (!inputValue.trim()) return;
-    send({ text: inputValue.trim() }).catch((err) =>
+    send({ text: inputValue.trim()}).catch((err) =>
       console.error("Send error", err)
     );
     setInputValue("");
@@ -71,11 +106,10 @@ export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
     dateLabel = lastMsgTimestamp.toLocaleDateString();
   }
 
-  const clientId = useContext(ClientIdContext);
+  
 
   return (
-    
-    <div className="mt-4 shadow-lg flex flex-col h-[80vh]">
+    <div className={`mt-4 shadow-lg flex flex-col ${containerHeightClass}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 bg-white shadow rounded-b-2xl">
         <div className="flex items-center gap-2">
@@ -101,22 +135,32 @@ export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
       </div>
 
       {/* Messages */}
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-        {messages.map((msg: any, idx) => {
-          const isMine = msg.clientId === clientId;
-          return (
-            <div
-              key={idx}
-              className={`max-w-[60%] px-3 py-2 text-sm rounded-2xl ${
-                isMine
-                  ? "bg-green-200 text-gray-800 rounded-br-none ml-auto"
-                  : "bg-blue-100 text-gray-900 rounded-bl-none"
-              }`}
-            >
-              {msg.text}
-            </div>
-          );
-        })}
+        {loading && <p className="rounded-lg bg-blue-50 w-fit p-2">Loading messages.....</p>}
+        {[...messages]
+          .sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          )
+          .map((msg: any, idx) => {
+            const isMine = msg.clientId === clientsIds;
+            console.log("msg.clientId:", msg.clientId);
+
+
+            return (
+              <div
+                key={idx}
+                className={`max-w-[60%] px-3 py-2 text-sm rounded-2xl break-words whitespace-normal ${
+                  isMine
+                    ? "bg-green-200 text-gray-800 rounded-br-none ml-auto"
+                    : "bg-blue-100 text-gray-900 rounded-bl-none"
+                }`}
+              >
+                {msg.text}
+              </div>
+            );
+          })}
         <div ref={bottomRef} />
       </div>
 
@@ -133,6 +177,5 @@ export default function ChatRoomInner({ type, chatId, goBack }: ChatRoomProps) {
         <Mic className="w-5 h-5 text-gray-500" />
       </div>
     </div>
-    
   );
 }

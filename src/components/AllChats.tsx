@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
 import ChatList from "./ChatList";
 import ChatRoom from "../components/ChatRoom";
@@ -10,23 +10,15 @@ import BadmintonIcon from "../icons/BadmintonIcon";
 import ChatCard from "./ChatCard";
 import { ChatRoomProvider } from "@ably/chat/react";
 import { ClientIdContext } from "../main";
-
+import axios from "axios";
 
 type AllChatsProps = {
   activeRoom?: string; // optional as not used here
   setActiveRoom?: (room: string) => void; // optional as not used here
 };
 
-const tribeIcons = [
-  { name: "Football Tribe", Icon: FootBallIcon },
-  { name: "Cricket Tribe", Icon: CricketIcon },
-  { name: "Tennis Tribe", Icon: TennisIcon },
-  { name: "Hockey Tribe", Icon: HockeyIcon },
-  { name: "Badminton Tribe", Icon: BadmintonIcon },
-];
 
 const AllChats = ({}: AllChatsProps) => {
-  
   // function RoomStatus() {
   //   const [currentRoomStatus, setCurrentRoomStatus] = useState("");
   //   const { roomName } = useRoom({
@@ -63,10 +55,23 @@ const AllChats = ({}: AllChatsProps) => {
   //   );
   // }
 
+  const [mySport, setMySports] = useState<any[]>([]);
+
+// Add this function to get appropriate icon for each sport
+const getIconForSport = (sportName: string) => {
+  const name = sportName.toLowerCase();
+  if (name.includes('cricket')) return CricketIcon;
+  if (name.includes('football')) return FootBallIcon;
+  if (name.includes('tennis')) return TennisIcon;
+  if (name.includes('hockey')) return HockeyIcon;
+  if (name.includes('badminton')) return BadmintonIcon;
+  // Default icon for unmatched sports
+  return () => <div className="text-2xl">🏃</div>;
+};
+
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("My Buddy");
   const [showNotifications, setShowNotifications] = useState(false);
-
 
   const isInChatRoom = activeChat !== null;
 
@@ -89,8 +94,44 @@ const AllChats = ({}: AllChatsProps) => {
   ];
 
   const clientId = useContext(ClientIdContext);
-  
+
   console.log(`hello from room-${chatType}-${activeChat}`);
+
+  function getRoomName(chatType: string, user1: string, user2: string) {
+    if (chatType !== "buddy" && chatType !== "game" && chatType !== "tribe") {
+      return `room-${chatType}-${user1}`; // for game or tribe, just use user1 or chatId
+    } 
+     if(chatType === "game"){
+      return `room-${chatType}-${user2}`
+    }
+
+    if( chatType === "tribe"){
+      return `room-${chatType}-${user2}`
+    }
+    // sort the two user IDs alphabetically
+    const sorted = [user1.toLowerCase(), user2.toLowerCase()].sort();
+    console.log("Roooom", `room-${chatType}-${sorted[0]}-${sorted[1]}`);
+
+    return `room-${chatType}-${sorted[0]}-${sorted[1]}`;
+  }
+
+  // Add this useEffect to fetch sports when type is tribe
+useEffect(() => {
+  if (chatType === "tribe") {
+    async function fetchSportDetails() {
+      try {
+        const res = await axios.get(`http://127.0.0.1:8000/sports/all`);
+        const data = res.data;
+        setMySports(data);
+      } catch (error) {
+        console.error("Error fetching sport details", error);
+        setMySports([]);
+      }
+    }
+    fetchSportDetails();
+  }
+}, [chatType]);
+
   return (
     <>
       <Header
@@ -137,23 +178,26 @@ const AllChats = ({}: AllChatsProps) => {
       {!showNotifications && (
         <>
           {/* Tribe Icons */}
-          {chatType === "tribe" && (
-            <div className="mx-4 mt-48 flex justify-between">
-              {tribeIcons.map(({ name, Icon }) => (
-                <div
-                  key={name}
-                  onClick={() => setActiveChat(null)}
-                  className={`cursor-pointer rounded-md w-14 h-14 flex items-center justify-center p-3 transition ${
-                    activeChat === name
-                      ? "bg-[#00f0ff] shadow-md"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  <Icon />
-                </div>
-              ))}
-            </div>
-          )}
+{chatType === "tribe" && (
+  <div className="mx-4 mt-48 flex justify-between">
+    {mySport.map((sport) => {
+      const IconComponent = getIconForSport(sport.name);
+      return (
+        <div
+          key={sport.name}
+          onClick={() => setActiveChat(null)}
+          className={`cursor-pointer rounded-md w-14 h-14 flex items-center justify-center p-3 transition ${
+            activeChat === sport.name
+              ? "bg-[#00f0ff] shadow-md"
+              : "bg-gray-200"
+          }`}
+        >
+          <IconComponent />
+        </div>
+      );
+    })}
+  </div>
+)}
 
           <div
             className={`${
@@ -164,49 +208,29 @@ const AllChats = ({}: AllChatsProps) => {
                 : ""
             } bg-white shadow-lg`}
           >
-
-            
-
             {isInChatRoom ? (
-              
-                
-              <ChatRoomProvider
-                name={`room-${chatType}-${activeChat}`}
-
-                
-                // @ts-ignore
-                connection={{ clientId: clientId }} // 👈 required for clientId checks
-              >
-                <ChatRoom
-                  type={chatType}
-                  chatId={activeChat!}
-                  goBack={() => setActiveChat(null)}
-                />
-              </ChatRoomProvider>
+              <ChatRoom
+                type={chatType}
+                chatId={activeChat!}
+                goBack={() => setActiveChat(null)}
+                activeTab={activeTab}
+                roomName={getRoomName(chatType, clientId, activeChat!)}
+              />
             ) : (
               <ChatList
                 type={chatType}
-                onOpenChat={(id) => {setActiveChat(id)
+                onOpenChat={(id) => {
+                  setActiveChat(id);
                   console.log("opening chat with id", id);
-                  
-                  }}
+                }}
                 activeChat={activeChat}
               />
-
-              
-              
             )}
           </div>
-          
         </>
       )}
     </>
   );
-
-  
 };
-
-
-
 
 export default AllChats;

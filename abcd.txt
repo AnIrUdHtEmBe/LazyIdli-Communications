@@ -1,0 +1,40 @@
+utkarsh
+
+{
+  "userId": "USER_EZRR97",
+  "addTheseUserIds": [
+    "USER_JWXJ19" , "USER_QSPY57", "USER_MUYP98"
+  ],
+  "addHereTargetList": "faveUsers"
+}
+
+test2
+
+{
+  "userId": "USER_ALBI32",
+  "addTheseUserIds": [
+    "USER_JWXJ19" , "USER_QSPY57", "USER_MUYP98"
+  ],
+  "addHereTargetList": "faveUsers"
+}
+
+test3
+
+{
+  "userId": "USER_BRQP38",
+  "addTheseUserIds": [
+    "USER_JWXJ19" , "USER_QSPY57", "USER_MUYP98", "USER_ALBI32"
+  ],
+  "addHereTargetList": "faveUsers"
+}
+
+
+
+utkersh and test2 are friends with each other
+{
+  "userId": "USER_ALBI32",
+  "addTheseUserIds": [
+    "USER_EZRR97"
+  ],
+  "addHereTargetList": "faveUsers"
+}
