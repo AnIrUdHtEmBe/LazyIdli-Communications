@@ -17,7 +17,6 @@ type AllChatsProps = {
   setActiveRoom?: (room: string) => void; // optional as not used here
 };
 
-
 const AllChats = ({}: AllChatsProps) => {
   // function RoomStatus() {
   //   const [currentRoomStatus, setCurrentRoomStatus] = useState("");
@@ -57,17 +56,17 @@ const AllChats = ({}: AllChatsProps) => {
 
   const [mySport, setMySports] = useState<any[]>([]);
 
-// Add this function to get appropriate icon for each sport
-const getIconForSport = (sportName: string) => {
-  const name = sportName.toLowerCase();
-  if (name.includes('cricket')) return CricketIcon;
-  if (name.includes('football')) return FootBallIcon;
-  if (name.includes('tennis')) return TennisIcon;
-  if (name.includes('hockey')) return HockeyIcon;
-  if (name.includes('badminton')) return BadmintonIcon;
-  // Default icon for unmatched sports
-  return () => <div className="text-2xl">🏃</div>;
-};
+  // Add this function to get appropriate icon for each sport
+  const getIconForSport = (sportName: string) => {
+    const name = sportName.toLowerCase();
+    if (name.includes("cricket")) return CricketIcon;
+    if (name.includes("football")) return FootBallIcon;
+    if (name.includes("tennis")) return TennisIcon;
+    if (name.includes("hockey")) return HockeyIcon;
+    if (name.includes("badminton")) return BadmintonIcon;
+    // Default icon for unmatched sports
+    return () => <div className="text-2xl">🏃</div>;
+  };
 
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("My Buddy");
@@ -100,13 +99,13 @@ const getIconForSport = (sportName: string) => {
   function getRoomName(chatType: string, user1: string, user2: string) {
     if (chatType !== "buddy" && chatType !== "game" && chatType !== "tribe") {
       return `room-${chatType}-${user1}`; // for game or tribe, just use user1 or chatId
-    } 
-     if(chatType === "game"){
-      return `room-${chatType}-${user2}`
+    }
+    if (chatType === "game") {
+      return `room-${chatType}-${user2}`;
     }
 
-    if( chatType === "tribe"){
-      return `room-${chatType}-${user2}`
+    if (chatType === "tribe") {
+      return `room-${chatType}-${user2}`;
     }
     // sort the two user IDs alphabetically
     const sorted = [user1.toLowerCase(), user2.toLowerCase()].sort();
@@ -116,21 +115,21 @@ const getIconForSport = (sportName: string) => {
   }
 
   // Add this useEffect to fetch sports when type is tribe
-useEffect(() => {
-  if (chatType === "tribe") {
-    async function fetchSportDetails() {
-      try {
-        const res = await axios.get(`http://127.0.0.1:8000/sports/all`);
-        const data = res.data;
-        setMySports(data);
-      } catch (error) {
-        console.error("Error fetching sport details", error);
-        setMySports([]);
+  useEffect(() => {
+    if (chatType === "tribe") {
+      async function fetchSportDetails() {
+        try {
+          const res = await axios.get(`http://127.0.0.1:8000/sports/all`);
+          const data = res.data;
+          setMySports(data);
+        } catch (error) {
+          console.error("Error fetching sport details", error);
+          setMySports([]);
+        }
       }
+      fetchSportDetails();
     }
-    fetchSportDetails();
-  }
-}, [chatType]);
+  }, [chatType]);
 
   return (
     <>
@@ -178,26 +177,26 @@ useEffect(() => {
       {!showNotifications && (
         <>
           {/* Tribe Icons */}
-{chatType === "tribe" && (
-  <div className="mx-4 mt-48 flex justify-between">
-    {mySport.map((sport) => {
-      const IconComponent = getIconForSport(sport.name);
-      return (
-        <div
-          key={sport.name}
-          onClick={() => setActiveChat(null)}
-          className={`cursor-pointer rounded-md w-14 h-14 flex items-center justify-center p-3 transition ${
-            activeChat === sport.name
-              ? "bg-[#00f0ff] shadow-md"
-              : "bg-gray-200"
-          }`}
-        >
-          <IconComponent />
-        </div>
-      );
-    })}
-  </div>
-)}
+          {chatType === "tribe" && (
+            <div className="mx-4 mt-48 flex justify-between">
+              {mySport.map((sport) => {
+                const IconComponent = getIconForSport(sport.name);
+                return (
+                  <div
+                    key={sport.name}
+                    onClick={() => setActiveChat(null)}
+                    className={`cursor-pointer rounded-md w-14 h-14 flex items-center justify-center p-3 transition ${
+                      activeChat === sport.name
+                        ? "bg-[#00f0ff] shadow-md"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    <IconComponent />
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <div
             className={`${

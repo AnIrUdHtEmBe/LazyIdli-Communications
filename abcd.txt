@@ -38,3 +38,7 @@ utkersh and test2 are friends with each other
   ],
   "addHereTargetList": "faveUsers"
 }
+
+
+admin can see all msgs of USers
+room names with ids

@@ -44,7 +44,7 @@ function Root() {
 
   useEffect(() => {
     // Generate UUID once on mount
-    setClientId("UTKERSH");
+    setClientId("USER_YOJB35");
   }, []);
 
   if (!clientId) return null; // or loading spinner

@@ -15,6 +15,7 @@ interface ChatListProps {
 
 type Buddy = {
   name: string;
+  id: string;
   message: string;
   count: number;
   time: string;
@@ -73,6 +74,7 @@ export default function ChatList({ type, onOpenChat }: ChatListProps) {
 
       const buddiesFromAPI: Buddy[] = faveUsersResponses.map((res) => ({
         name: res.data.name || "Unknown",
+        id: res.data.userId,
         message: res.data.lastMessage || "Hi there",
         count: 0,
         time: "12:30",
@@ -197,7 +199,7 @@ useEffect(() => {
   useEffect(() => {
     if (type === "buddy") {
       (async () => {
-        const fetchedBuddies = await fetchBuddiesFromAPI("USER_ALBI32");
+        const fetchedBuddies = await fetchBuddiesFromAPI("USER_YOJB35");
         setBuddies(fetchedBuddies);
       })();
     }
@@ -221,7 +223,7 @@ useEffect(() => {
               time={user.time}
               message={user.message}
               onClick={() => {
-                onOpenChat(user.name);
+                onOpenChat(user.id);
                 setPastGames(false);
               }}
               icon={
@@ -255,7 +257,7 @@ useEffect(() => {
                 time={group.time}
                 message={group.message}
                 onClick={() => {
-                  onOpenChat(group.gameId);
+                  onOpenChat(group.sport);
                   setPastGames(false);
                 }}
                 icon={
